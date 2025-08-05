@@ -15,25 +15,27 @@ import {
   Input,
 } from '@/shared/ui';
 
-import { LoginFormData, loginSchema } from '../model';
+import { SignUpFormData, signUpSchema } from '../model';
 
-const LoginForm = () => {
-  const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+const SignUpForm = () => {
+  const signUpForm = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
       rememberMe: false,
     },
   });
+
   return (
-    <Form {...loginForm}>
+    <Form {...signUpForm}>
       <form
-        onSubmit={loginForm.handleSubmit((data) => console.log(data))}
+        onSubmit={signUpForm.handleSubmit((data) => console.log(data))}
         className="space-y-5 min-w-full"
       >
         <FormField
-          control={loginForm.control}
+          control={signUpForm.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -47,7 +49,7 @@ const LoginForm = () => {
         />
 
         <FormField
-          control={loginForm.control}
+          control={signUpForm.control}
           name="password"
           render={({ field }) => (
             <FormItem>
@@ -61,7 +63,21 @@ const LoginForm = () => {
         />
 
         <FormField
-          control={loginForm.control}
+          control={signUpForm.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input height="lg" type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={signUpForm.control}
           name="rememberMe"
           render={({ field }) => (
             <FormItem className="flex items-center gap-2 flex-row-reverse w-fit">
@@ -81,11 +97,11 @@ const LoginForm = () => {
         />
 
         <Button width="full" size="lg" type="submit">
-          Login
+          Sign Up
         </Button>
       </form>
     </Form>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;

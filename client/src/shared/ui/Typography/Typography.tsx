@@ -6,9 +6,9 @@ import { cn } from '@/shared/lib/utils';
 const typographyVariants = cva('', {
   variants: {
     variant: {
-      h1: 'text-[2rem] font-semibold leading-[40px]',
-      h2: 'text-2xl',
-      h3: 'text-xl',
+      h1: 'text-[1.5rem] lg:text-[2rem] font-semibold leading-[40px]',
+      h2: 'text-xl lg:text-2xl',
+      h3: 'text-lg lg:text-xl',
       p: 'text-base',
     },
     textColor: {
@@ -18,8 +18,8 @@ const typographyVariants = cva('', {
     affects: {
       caption: 'text-xs',
       small: 'text-sm',
-      normal: 'text-base',
-      large: 'text-[2.3rem] font-semibold',
+      normal: 'text-sm lg:text-base',
+      large: 'text-[2rem] lg:text-[2.3rem] font-semibold',
     },
     defaultVariants: {
       variant: 'p',
