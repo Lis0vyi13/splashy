@@ -95,7 +95,7 @@ body {
 .dark {
   --background: #000000;
   --text: #ffffff;
-  --website-bg: linear-gradient(to right, #0d0d0d, #2d2d2d);
+  --website-bg: linear-gradient(to right, #0a0a0f, #111133, #0a0a0f);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);

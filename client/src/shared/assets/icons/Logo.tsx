@@ -11,7 +11,7 @@ interface LogoProps {
 const sizeMap: Record<LogoVariant, number> = {
   small: 32,
   medium: 64,
-  large: 128,
+  large: 90,
 };
 
 const Logo = ({ variant = 'medium' }: LogoProps) => {
