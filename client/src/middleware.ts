@@ -11,5 +11,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-url', pathname);
+
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
+
+export const config = {
+  matcher: ['/auth/:path*'],
+};

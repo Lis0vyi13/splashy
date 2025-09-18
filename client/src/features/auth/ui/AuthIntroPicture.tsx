@@ -8,6 +8,7 @@ const AuthIntroPicture = () => {
         fill
         priority
         alt="Auth illustration"
+        fetchPriority="high"
         className="object-cover rounded-3xl"
       />
     </div>

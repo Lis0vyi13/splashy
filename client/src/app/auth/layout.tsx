@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import * as motion from 'motion/react-client';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 
@@ -12,7 +12,7 @@ import {
 
 import { Logo } from '@/shared/assets';
 import { APP_NAME, ROUTES } from '@/shared/config';
-import { fadeContainer, fadeInUp } from '@/shared/lib/animations';
+import { fadeContainer } from '@/shared/lib/animations';
 import { Typography } from '@/shared/ui';
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
@@ -29,9 +29,9 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
           animate="visible"
           exit="exit"
         >
-          <motion.main
+          <motion.section
             className="w-full lg:w-1/2 gap-8 flex flex-col justify-between h-full"
-            variants={fadeInUp}
+            variants={fadeContainer}
           >
             <header className="flex items-center justify-between gap-2">
               <div className="flex mt-4 sm:mt-0 justify-center max-sm:mx-auto items-center gap-2 max-sm:w-full">
@@ -48,7 +48,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
             <motion.div
               key={pathName}
               className="mx-auto text-center w-full md:w-md"
-              variants={fadeInUp}
+              variants={fadeContainer}
               initial="hidden"
               animate="visible"
               exit="exit"
@@ -67,9 +67,12 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
             </motion.div>
 
             <AuthFooter />
-          </motion.main>
+          </motion.section>
 
-          <motion.aside className="hidden lg:block w-1/2" variants={fadeInUp}>
+          <motion.aside
+            className="hidden lg:block w-1/2"
+            variants={fadeContainer}
+          >
             <AuthIntroPicture />
           </motion.aside>
         </motion.div>
