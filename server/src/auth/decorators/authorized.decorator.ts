@@ -1,13 +1,13 @@
 import {
   createParamDecorator,
+  ExecutionContext,
   UnauthorizedException,
-  type ExecutionContext,
 } from '@nestjs/common';
-import type { Request } from 'express';
-import type { User } from 'generated/prisma';
+import { Request } from 'express';
+import { User } from 'generated/prisma';
 
 export const Authorized = createParamDecorator(
-  (key?: keyof User, ctx?: ExecutionContext): any => {
+  (keys?: keyof User | (keyof User)[], ctx?: ExecutionContext): unknown => {
     const request = ctx?.switchToHttp().getRequest<Request>();
     const user = request?.user as User | undefined;
 
@@ -15,6 +15,21 @@ export const Authorized = createParamDecorator(
       throw new UnauthorizedException('Not authorized');
     }
 
-    return key ? user[key] : user;
+    const userWithoutPassword: Partial<User> = { ...user };
+    delete userWithoutPassword.password;
+
+    if (!keys) return userWithoutPassword;
+
+    if (Array.isArray(keys)) {
+      const selectedFields = {} as Partial<Record<keyof User, unknown>>;
+
+      for (const key of keys) {
+        selectedFields[key] = userWithoutPassword[key];
+      }
+
+      return selectedFields;
+    }
+
+    return userWithoutPassword[keys];
   },
 );

@@ -1,50 +1,16 @@
 'use client';
 
-import { ReactNode, createContext, useEffect, useState } from 'react';
-
-import { Theme } from '@/shared/types';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import type { ReactNode } from 'react';
 
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export const ThemeContext = createContext<
-  { theme: Theme; toggleTheme: () => void } | undefined
->(undefined);
-
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    if (savedTheme) setTheme(savedTheme);
-    else {
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches;
-      setTheme(prefersDark ? 'dark' : 'light');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => {
-      const next = prev === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme', next);
-      return next;
-    });
-  };
-
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div data-theme={theme}>{children}</div>
-    </ThemeContext.Provider>
+    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </NextThemesProvider>
   );
-}
+};

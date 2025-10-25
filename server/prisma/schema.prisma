@@ -16,6 +16,7 @@ model User {
   password  String
   avatar    String?
   bio       String?
+  dateOfBirth DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

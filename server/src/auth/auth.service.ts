@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import type { RegisterRequest } from './dto/register.dto';
+import type { SignUpRequest } from './dto/sign-up.dto';
 import type { LoginRequest } from './dto/login.dto';
 import { AuthUtils } from './utils/auth.utils';
 import { hash, verify } from 'argon2';
@@ -31,8 +31,8 @@ export class AuthService {
     this.COOKIE_DOMAIN = this.configService.getOrThrow<string>('COOKIE_DOMAIN');
   }
 
-  async register(res: Response, dto: RegisterRequest) {
-    const { email, name, password } = dto;
+  async signup(res: Response, dto: SignUpRequest) {
+    const { email, name, password, rememberMe } = dto;
 
     const existingUser = await this.prismaService.user.findUnique({
       where: { email },
@@ -56,11 +56,11 @@ export class AuthService {
       },
     });
 
-    return this.auth(res, user.id);
+    return this.auth(res, user.id, rememberMe);
   }
 
   async login(res: Response, dto: LoginRequest) {
-    const { email, password } = dto;
+    const { email, password, rememberMe } = dto;
 
     const user = await this.prismaService.user.findUnique({
       where: { email },
@@ -80,7 +80,7 @@ export class AuthService {
       throw new NotFoundException('Invalid email or password');
     }
 
-    return this.auth(res, user.id);
+    return this.auth(res, user.id, rememberMe);
   }
 
   async refresh(req: Request, res: Response) {
@@ -105,7 +105,7 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    return this.auth(res, user.id);
+    return this.auth(res, user.id, payload.rememberMe);
   }
 
   logout(res: Response) {
@@ -124,25 +124,28 @@ export class AuthService {
     return user;
   }
 
-  private auth(res: Response, userId: string) {
-    const { accessToken, refreshToken } = this.generateTokens(userId);
-
-    this.setCookie(
-      res,
-      refreshToken,
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+  private auth(res: Response, userId: string, rememberMe = false) {
+    const { accessToken, refreshToken } = this.generateTokens(
+      userId,
+      rememberMe,
     );
+
+    const expiry = rememberMe
+      ? new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+      : new Date(Date.now() + 1000 * 60 * 60 * 24);
+
+    this.setCookie(res, refreshToken, expiry);
 
     return { accessToken };
   }
 
-  private generateTokens(userId: string) {
-    const payload: JwtPayload = { userId };
+  private generateTokens(userId: string, rememberMe = false) {
+    const payload: JwtPayload = { userId, rememberMe };
 
     const accessToken = this.jwtService.sign(payload);
 
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: this.refreshTokenExpiry,
+      expiresIn: rememberMe ? this.refreshTokenExpiry : '1d',
     });
 
     return { accessToken, refreshToken };

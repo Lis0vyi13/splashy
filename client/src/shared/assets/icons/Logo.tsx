@@ -1,26 +1,13 @@
-import Image from 'next/image';
-
 import { LOGO } from '@/shared/config';
+import { Avatar } from '@/shared/ui';
+import type { AvatarProps } from '@/shared/ui/Avatar';
 
-type LogoVariant = 'small' | 'medium' | 'large';
-
-interface LogoProps {
-  variant?: LogoVariant;
-}
-
-const sizeMap: Record<LogoVariant, number> = {
-  small: 32,
-  medium: 64,
-  large: 90,
-};
-
-const Logo = ({ variant = 'medium' }: LogoProps) => {
-  const size = sizeMap[variant];
-
+const Logo = ({ variant, ...props }: AvatarProps) => {
   return (
-    <div style={{ width: size, height: size }} className="relative">
-      <Image src={LOGO} alt="Splashy Logo" fill className="object-contain" />
-    </div>
+    <Avatar {...props} variant={variant}>
+      <Avatar.Image src={LOGO} alt="Company Logo" />
+      <Avatar.Fallback>SL</Avatar.Fallback>
+    </Avatar>
   );
 };
 

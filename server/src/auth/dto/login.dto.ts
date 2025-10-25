@@ -20,4 +20,11 @@ export class LoginRequest {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Remember me option',
+  })
+  @IsNotEmpty()
+  rememberMe: boolean;
 }

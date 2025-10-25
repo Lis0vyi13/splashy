@@ -10,29 +10,26 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends(
+    'next/core-web-vitals',
+    'next/typescript',
+    '@feature-sliced'
+  ),
   {
-    parserOptions: {
+    languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      project: './tsconfig.json',
-      tsconfigRootDir: __dirname,
+      parserOptions: {
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+      },
     },
     rules: {
-      '@typescript-eslint/explicit-function-return-type': [
+      '@typescript-eslint/consistent-type-imports': [
         'error',
         {
-          allowExpressions: true,
-          allowTypedFunctionExpressions: true,
-        },
-      ],
-      '@typescript-eslint/typedef': [
-        'error',
-        {
-          variableDeclaration: true,
-          parameter: true,
-          propertyDeclaration: true,
-          memberVariableDeclaration: true,
+          prefer: 'type-imports',
+          disallowTypeAnnotations: false,
         },
       ],
     },

@@ -1,0 +1,9 @@
+.ReactCrop .ord-n,
+.ReactCrop .ord-s,
+.ReactCrop .ord-e,
+.ReactCrop .ord-w {
+  display: none !important;
+}
+.ReactCrop {
+  --rc-focus-color: rgba(255, 255, 255, 0.8);
+}

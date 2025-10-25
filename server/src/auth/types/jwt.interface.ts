@@ -1,1 +1,1 @@
-export type JwtPayload = { userId: string };
+export type JwtPayload = { userId: string; rememberMe: boolean };

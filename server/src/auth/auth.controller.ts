@@ -9,8 +9,8 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterRequest } from './dto/register.dto';
-import { LoginRequest } from './dto/login.dto';
+import { type SignUpRequest } from './dto/sign-up.dto';
+import { type LoginRequest } from './dto/login.dto';
 import type { Response, Request } from 'express';
 import {
   ApiBadRequestResponse,
@@ -35,13 +35,13 @@ export class AuthController {
   @ApiOkResponse({ type: AuthResponse })
   @ApiConflictResponse({ description: 'User with this email already exists' })
   @ApiBadRequestResponse({ description: 'Validation error' })
-  @Post('register')
+  @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  async register(
+  async signup(
     @Res({ passthrough: true }) res: Response,
-    @Body() dto: RegisterRequest,
+    @Body() dto: SignUpRequest,
   ) {
-    return this.authService.register(res, dto);
+    return this.authService.signup(res, dto);
   }
 
   @ApiOperation({

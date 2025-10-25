@@ -1,15 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import { ROUTES } from './shared/config';
+import {
+  AUTH_ROUTES,
+  DEFAULT_LOGIN_REDIRECT,
+  PRIVATE_ROUTES,
+  ROUTES,
+} from './shared/config';
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-  if (pathname === ROUTES.AUTH || pathname === '/') {
-    const url = request.nextUrl.clone();
+  const refreshToken = req.cookies.get('refreshToken')?.value;
+
+  const isHomePage = pathname === '/';
+
+  const isPrivate = PRIVATE_ROUTES.some((route) => pathname.startsWith(route));
+  if (isPrivate && !refreshToken) {
+    const url = req.nextUrl.clone();
+    url.pathname = ROUTES.LOGIN;
+    return NextResponse.redirect(url);
+  }
+
+  const isAuthPage = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+  if ((isAuthPage || isHomePage) && refreshToken) {
+    const url = req.nextUrl.clone();
+    url.pathname = DEFAULT_LOGIN_REDIRECT;
+    return NextResponse.redirect(url);
+  }
+
+  if (isHomePage) {
+    const url = req.nextUrl.clone();
     url.pathname = ROUTES.LOGIN;
     return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};

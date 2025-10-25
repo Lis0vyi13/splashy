@@ -14,6 +14,7 @@ const typographyVariants = cva('', {
     textColor: {
       primary: 'text-black',
       secondary: 'text-ghost',
+      white: 'text-white',
     },
     affects: {
       caption: 'text-xs',
