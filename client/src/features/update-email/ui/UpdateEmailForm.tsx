@@ -24,7 +24,8 @@ import {
 
 const UpdateEmailForm = () => {
   const { data: userData } = useMeQuery();
-  const updateEmail = useUpdateEmailMutation();
+  const updateEmailMutation = useUpdateEmailMutation();
+
   const form = useForm<UpdateEmailData>({
     resolver: zodResolver(updateEmailSchema),
     values: {
@@ -32,10 +33,16 @@ const UpdateEmailForm = () => {
     },
   });
 
-  const disabled = form.formState.isSubmitting || !form.formState.isDirty;
+  const { isDirty, isSubmitting } = form.formState;
+
+  const disabled = !isDirty || isSubmitting;
 
   const handleSubmit = form.handleSubmit(async (formData) => {
-    await updateEmail.mutateAsync(formData);
+    await updateEmailMutation.mutateAsync(formData);
+
+    form.reset({
+      email: formData.email,
+    });
   });
 
   return (

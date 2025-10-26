@@ -15,6 +15,8 @@ import { Authorization } from 'src/auth/decorators/authorization.decorator';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { UpdateEmailDto } from './dto/update-email.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
 
 @Controller('users')
 export class UsersController {
@@ -49,7 +51,22 @@ export class UsersController {
     @Authorized('id') userId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const avatarUrl = await this.usersService.uploadAvatar(userId, file);
-    return { url: avatarUrl };
+    return this.usersService.uploadAvatar(userId, file);
+  }
+
+  @Authorization()
+  @Patch('request-email-change')
+  @HttpCode(HttpStatus.OK)
+  requestEmailChange(
+    @Authorized('id') userId: string,
+    @Body() dto: UpdateEmailDto,
+  ) {
+    return this.usersService.requestEmailChange(userId, dto);
+  }
+
+  @Patch('confirm-email-change')
+  @HttpCode(HttpStatus.OK)
+  confirmEmailChange(@Body() dto: ConfirmEmailDto) {
+    return this.usersService.confirmEmailChange(dto);
   }
 }

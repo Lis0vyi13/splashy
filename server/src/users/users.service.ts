@@ -9,12 +9,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import { UpdateEmailDto } from './dto/update-email.dto';
+import * as crypto from 'crypto';
+import { MailService } from 'src/mail/mail.service';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly supabase: SupabaseService,
+    private readonly mailService: MailService,
   ) {}
 
   async updateMe(userId: string, data: UpdateUserDto) {
@@ -68,10 +73,53 @@ export class UsersService {
       data: { avatar: publicData.publicUrl },
     });
 
-    return publicData.publicUrl;
+    return { url: publicData.publicUrl };
   }
 
   async getUserById(userId: string) {
     return this.prisma.user.findUnique({ where: { id: userId } });
+  }
+
+  async requestEmailChange(userId: string, dto: UpdateEmailDto) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const emailTaken = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (emailTaken) throw new BadRequestException('Email already in use');
+
+    const token = crypto.randomBytes(32).toString('hex');
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { pendingEmail: dto.email, emailToken: token },
+    });
+
+    await this.mailService.sendEmailChange(user.email, dto.email, token);
+
+    return { message: `Confirmation email sent to ${dto.email}` };
+  }
+
+  async confirmEmailChange(dto: ConfirmEmailDto) {
+    const user = await this.prisma.user.findFirst({
+      where: { emailToken: dto.token },
+    });
+    if (!user) throw new BadRequestException('Invalid or expired token');
+
+    if (!user.pendingEmail) {
+      throw new BadRequestException('No pending email to confirm');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        email: user.pendingEmail,
+        pendingEmail: null,
+        emailToken: null,
+      },
+    });
+
+    return { message: 'Email updated successfully' };
   }
 }
