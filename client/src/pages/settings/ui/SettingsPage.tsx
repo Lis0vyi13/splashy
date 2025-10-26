@@ -1,10 +1,7 @@
+import { AccountTab, AppearanceTab, ProfileTab } from '@/widgets/settings-tabs';
+
 import { LogoutButton } from '@/features/auth/logout';
-import {
-  AccountTab,
-  AppearanceTab,
-  ProfileTab,
-  settingsTabs,
-} from '@/features/settings';
+import { settingsTabs } from '@/features/settings';
 
 import {
   Separator,

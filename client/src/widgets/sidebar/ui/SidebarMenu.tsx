@@ -11,7 +11,7 @@ const SidebarMenu = () => {
   return (
     <nav className="flex flex-col gap-2">
       {menuItems.map((item) => {
-        const active = item.href?.startsWith(pathname);
+        const active = pathname ? item.href?.startsWith(pathname) : false;
         return <SidebarMenuItem active={active} key={item.id} item={item} />;
       })}
     </nav>

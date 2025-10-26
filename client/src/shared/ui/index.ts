@@ -10,6 +10,7 @@ export { Label } from './Label';
 export * from './Calendar';
 export * from './RadioGroup';
 export * from './Separator';
+export * from './SettingsFeatureWrapper';
 export * from './Sheet';
 export * from './Sidebar';
 export * from './Skeleton';
